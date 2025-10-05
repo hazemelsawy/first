@@ -1,0 +1,77 @@
+import React, {useState} from 'react'
+import { Container, Accordion, Card, Button } from 'react-bootstrap';
+import styled from 'styled-components';
+import FadeIn from 'react-fade-in'
+import pattern from '../assets/pattern.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Firebase from '../firebase/Firebase'
+import ContentSkeleton from '../skeletons/Content'
+const Styles = styled.div`
+  h3{
+    color: #ae852f;
+  }
+  .contact-container::before {
+    content: "";
+    background: url("${pattern}");
+    background-color: #c1a365;
+    background-size: 150px;
+    opacity: 0.12;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;   
+  }
+  .bg-white{
+    background: rgba(255,255,255,0.5) !important;
+  }
+  button.btn-link{
+    color:#ae852f;
+    font-weight:bold;
+    text-decoration:underline;
+  }
+  button.btn-link:focus{
+    box-shadow:none !important;
+  }
+  button.empty{
+    color:#ae852f !important;
+    opacity: 1 !important;
+    text-decoration:none;
+  }
+
+`;
+export const Services = () => {
+  const [content, setContent] = useState("");
+  Firebase.firestore().collection('pages').doc("services").get().then(snapshot => {
+    console.log(snapshot.data()["content"])
+    setContent(snapshot.data()["content"]);
+  });
+  return(
+  <Styles>
+    <Container>
+      <h3 className="text-center font-weight-bold mb-4">خدماتنا</h3>
+
+
+      <FadeIn>
+          {content !== "" && (
+            <div className="mt-3 contact-container position-relative p-3 rounded-lg overflow-hidden">
+              <div className="text-right bg-white p-3 rounded-lg" dangerouslySetInnerHTML={{ __html: content }}>
+              </div>
+            </div>
+          )}
+          {content === "" && (
+
+            <div className="mt-3 contact-container position-relative p-3 rounded-lg overflow-hidden">
+              <div className="text-right bg-white p-3 rounded-lg">
+                <ContentSkeleton />
+              </div>
+
+            </div>
+
+          )}
+      </FadeIn>
+    </Container>
+  </Styles>
+)
+              }
